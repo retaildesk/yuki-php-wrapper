@@ -23,7 +23,7 @@ namespace Yuki;
  *
  * @author Bert Maurau
  */
-class AccountingInfo extends Yuki
+class Contact extends Yuki
 {
 
     const WS_SERVICE = 'Contact.asmx?WSDL';
@@ -47,16 +47,19 @@ class AccountingInfo extends Yuki
         }
 
         $request = array(
-            "sessionID" => $this -> getSessionID());
-
+            "sessionID" => $this -> getSessionID(),
+            "searchOption"=>"All",
+            "sortOrder"=>"Name",
+            "active"=>"Active",
+            "pageNumber"=>1
+        );
         try {
             $result = $this -> soap -> SearchContacts($request);
         } catch (\Exception $ex) {
             // Just pass the exception through and let the index handle the exception
             throw $ex;
         }
-        // Return the list of Administrations
-        return $result -> GetGLAccountSchemeResult->GlAccount;
+        return json_decode(json_encode((array)simplexml_load_string($result -> SearchContactsResult->any)), TRUE)['contact'];
+        // Return the list of Contacts
     }
-
 }
