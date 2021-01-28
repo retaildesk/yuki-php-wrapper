@@ -59,7 +59,7 @@ class Contact extends Yuki
             // Just pass the exception through and let the index handle the exception
             throw $ex;
         }
-        return json_decode(json_encode((array)simplexml_load_string($result -> SearchContactsResult->any)), TRUE)['contact'];
+        return json_decode(json_encode((array)simplexml_load_string($result -> SearchContactsResult->any)), TRUE)['Contact'];
         // Return the list of Contacts
     }
 }
