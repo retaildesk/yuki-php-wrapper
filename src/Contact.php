@@ -46,20 +46,66 @@ class Contact extends Yuki
             throw new Exception\InvalidSessionIDException();
         }
 
-        $request = array(
-            "sessionID" => $this -> getSessionID(),
-            "searchOption"=>"All",
-            "sortOrder"=>"Name",
-            "active"=>"Active",
-            "pageNumber"=>1
-        );
+
+        $customers = [];
         try {
-            $result = $this -> soap -> SearchContacts($request);
+            $count = 100;
+            $page_number = 1;
+            while($count == 100){
+                $request = array(
+                    "sessionID" => $this -> getSessionID(),
+                    "searchOption"=>"All",
+                    "sortOrder"=>"Name",
+                    "active"=>"Both",
+                    "pageNumber"=>$page_number
+                );
+
+                $result = json_decode(json_encode((array)simplexml_load_string($this -> soap -> SearchContacts($request) -> SearchContactsResult->any)), TRUE)['Contact'];
+                $count = count($result);
+                $customers = array_merge($customers,$result);
+                $page_number++;
+            }
+            return $customers;
         } catch (\Exception $ex) {
             // Just pass the exception through and let the index handle the exception
             throw $ex;
         }
-        return json_decode(json_encode((array)simplexml_load_string($result -> SearchContactsResult->any)), TRUE)['Contact'];
-        // Return the list of Contacts
+        return $customers;
+    }
+    /**
+     * Update Contact https://support.yuki.nl/nl/support/solutions/articles/11000063071-updatecontact-sessionid-domainid-xmldoc-
+     * @param array $contact
+     * @return stdclass
+     * @throws \Exception
+     */
+    public function updateContact($contact){
+        // Check for sessionId first
+        if (!$this -> getSessionID()) {
+            throw new Exception\InvalidSessionIDException();
+        }
+        // Check for sessionId first
+        if (!$this -> getAdministrationID()) {
+            throw new Exception\InvalidAdministrationIDException();
+        }
+        // Check for given domain
+        if (!$contact) {
+            return false;
+        } else {
+            $xmlDoc = $contact->renderXml();
+        }
+
+        $xmlvar = new \SoapVar('<ns1:xmlDoc>' . $xmlDoc . '</ns1:xmlDoc>', \XSD_ANYXML);
+        $request = array(
+            "sessionId"        => $this -> getSessionID(),
+            "administrationId" => $this -> getAdministrationID(),
+            "xmlDoc"           => $xmlvar);
+
+        try {
+            $result = $this->soap->UpdateContact($request);
+        } catch (\Exception $ex) {
+            // Just pass the exception through and let the index handle the exception
+            throw $ex;
+        }
+        return $this -> parseXMLResponse($result->UpdateContactResult->any);
     }
 }

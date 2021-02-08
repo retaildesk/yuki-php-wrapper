@@ -19,6 +19,7 @@
 namespace Yuki\Model;
 
 use Yuki\Exception as Exception;
+use Yuki\ModelFactory;
 
 /**
  * Description of Contact
@@ -44,6 +45,7 @@ class Contact
     public $CoCNumber;
     public $VATNumber;
     public $contactType;
+    public $ID;
 
     public function getContactCode()
     {
@@ -53,6 +55,15 @@ class Contact
     public function getFullName()
     {
         return $this -> fullName;
+    }
+    public function getID()
+    {
+        return $this -> ID;
+    }
+    public function setID($id)
+    {
+        $this -> ID = $id;
+        return $this;
     }
 
     public function getFirstName()
@@ -227,6 +238,37 @@ class Contact
         }
         $this -> contactType = $contactType;
         return $this;
+    }
+    public function renderXml()
+    {
+        $xmlDoc = '<Contact>';
+        $xmlDoc .= $this -> recursiveXml($this);
+        $xmlDoc .= '</Contact>';
+        return $xmlDoc;
+    }
+    private function recursiveXml($elem)
+    {
+        $xmlDoc = '';
+        $objects = (is_array($elem)) ? $elem : ((is_object($elem)) ? get_object_vars($elem) : exit());
+        foreach ($objects as $property => $value) {
+            $property = ucfirst($property);
+            if (is_array($value)) {
+                $xmlDoc .= '<' . $property . '>';
+                foreach ($value as $index => $child) {
+                    $xmlDoc .= '<' . ModelFactory::getName($child) . '>';
+                    $xmlDoc .= $this -> recursiveXml($child);
+                    $xmlDoc .= '</' . ModelFactory::getName($child) . '>';
+                }
+                $xmlDoc .= '</' . $property . '>';
+            } else if (is_object($value)) {
+                $xmlDoc .= '<' . ModelFactory::getName($value) . '>';
+                $xmlDoc .= $this -> recursiveXml($value);
+                $xmlDoc .= '</' . ModelFactory::getName($value) . '>';
+            } else if ($value) {
+                $xmlDoc .= '<' . $property . '>' . $value . '</' . $property . '>';
+            }
+        }
+        return $xmlDoc;
     }
 
 }
