@@ -98,6 +98,7 @@ class Contact extends Yuki
         $request = array(
             "sessionId"        => $this -> getSessionID(),
             "administrationId" => $this -> getAdministrationID(),
+            "domainId"=>$this->getCurrentDomain(),
             "xmlDoc"           => $xmlvar);
 
         try {
