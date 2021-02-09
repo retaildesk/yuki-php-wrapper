@@ -180,9 +180,8 @@ class Yuki
             // Just pass the exception through and let the index handle the exception
             throw $ex;
         }
-
         // Return the Model
-        return $this -> getModelsFromXML($result -> GetCurrentDomainResult -> any, 'Domain', true);
+        return json_decode(json_encode((array)simplexml_load_string($result -> GetCurrentDomainResult -> any)), TRUE)['Domain']['@attributes']['ID']
     }
 
     /**
