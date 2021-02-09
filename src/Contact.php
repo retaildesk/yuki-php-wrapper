@@ -96,7 +96,7 @@ class Contact extends Yuki
 
         $xmlvar = new \SoapVar('<ns1:xmlDoc>' . $xmlDoc . '</ns1:xmlDoc>', \XSD_ANYXML);
         $request = array(
-            "sessionId"        => $this -> getSessionID(),
+            "sessionID"        => $this -> getSessionID(),
             "administrationId" => $this -> getAdministrationID(),
             "domainId"=>$this->getCurrentDomain(),
             "xmlDoc"           => $xmlvar);
