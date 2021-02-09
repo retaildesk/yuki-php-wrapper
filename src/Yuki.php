@@ -181,7 +181,7 @@ class Yuki
             throw $ex;
         }
         // Return the Model
-        return json_decode(json_encode((array)simplexml_load_string($result -> GetCurrentDomainResult -> any)), TRUE)['Domain']['@attributes']['ID']
+        return json_decode(json_encode((array)simplexml_load_string($result -> GetCurrentDomainResult -> any)), TRUE)['Domain']['@attributes']['ID'];
     }
 
     /**
