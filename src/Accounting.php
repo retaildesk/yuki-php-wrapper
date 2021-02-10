@@ -48,13 +48,12 @@ class Accounting extends Yuki
         if (!$this -> getAdministrationID()) {
             throw new Exception\InvalidAdministrationIDException();
         }
-        $xmlDoc = $journal;
-        $xmlvar = new \SoapVar('<ns1:xmlDoc>' . $xmlDoc . '</ns1:xmlDoc>', \XSD_ANYXML);
+
 
         $request = array(
             "sessionID"        => $this -> getSessionID(),
             "administrationID" => $this -> getAdministrationID(),
-            "xmlDoc"           => $xmlvar);
+            "xmlDoc"           => $journal);
 
         try {
             $result = $this -> soap -> ProcessJournal($request);
