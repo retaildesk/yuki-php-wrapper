@@ -23,7 +23,7 @@ namespace Yuki;
  *
  * @author Bert Maurau
  */
-class AccountingInfo extends Yuki
+class Accounting extends Yuki
 {
 
     const WS_SERVICE = 'Accounting.asmx?WSDL';
