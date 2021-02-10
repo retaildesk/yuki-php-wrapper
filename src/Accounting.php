@@ -61,7 +61,7 @@ class Accounting extends Yuki
             // Just pass the exception through and let the index handle the exception
             throw $ex;
         }
-        return simplexml_load_string($result -> ProcessJournalResult);
+        return $result -> ProcessJournalResult;
     }
 
 
